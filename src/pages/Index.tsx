@@ -1,12 +1,16 @@
 import { useState } from 'react';
-import { 
-  DollarSign, 
-  TrendingUp, 
-  TrendingDown, 
+import { useNavigate } from 'react-router-dom';
+import {
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
   CreditCard,
   Plus,
-  BarChart3
+  BarChart3,
+  LogOut,
+  Users
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { SummaryCard } from '@/components/admin/SummaryCard';
 import { CostsTable } from '@/components/admin/CostsTable';
@@ -18,6 +22,7 @@ import { useFinanceData } from '@/hooks/useFinanceData';
 const Index = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { costs, sales, addCost, removeCost, addSale, removeSale, summary } = useFinanceData();
+  const navigate = useNavigate();
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -39,14 +44,35 @@ const Index = () => {
               Gerencie custos, vendas e divisão de lucros
             </p>
           </div>
-          <Button 
-            variant="gradient" 
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Adicionar Venda
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/crm')}
+              className="gap-2"
+            >
+              <Users className="h-4 w-4" />
+              CRM
+            </Button>
+            <Button
+              variant="outline"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate('/login');
+              }}
+              className="gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Sair
+            </Button>
+            <Button
+              variant="gradient"
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Adicionar Venda
+            </Button>
+          </div>
         </header>
 
         {/* Summary Cards */}
@@ -86,10 +112,10 @@ const Index = () => {
 
         {/* Tables Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <CostsTable 
-            costs={costs} 
-            onAddCost={addCost} 
-            onRemoveCost={removeCost} 
+          <CostsTable
+            costs={costs}
+            onAddCost={addCost}
+            onRemoveCost={removeCost}
           />
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -97,8 +123,8 @@ const Index = () => {
                 <BarChart3 className="h-5 w-5 text-success" />
                 <span className="text-sm text-muted-foreground">Vendas Registradas</span>
               </div>
-              <Button 
-                variant="success" 
+              <Button
+                variant="success"
                 size="sm"
                 onClick={() => setIsModalOpen(true)}
                 className="flex items-center gap-1"
@@ -107,9 +133,9 @@ const Index = () => {
                 Adicionar
               </Button>
             </div>
-            <SalesTable 
-              sales={sales} 
-              onRemoveSale={removeSale} 
+            <SalesTable
+              sales={sales}
+              onRemoveSale={removeSale}
             />
           </div>
         </div>

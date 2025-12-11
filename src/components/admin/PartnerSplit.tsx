@@ -29,7 +29,7 @@ export function PartnerSplit({ summary }: PartnerSplitProps) {
             </div>
             <span className="text-sm text-muted-foreground">Sócio 1</span>
           </div>
-          
+
           <div className="space-y-2">
             <div className="flex justify-between items-center p-3 rounded-lg bg-background/30">
               <span className="text-xs text-muted-foreground">Custos</span>
@@ -37,9 +37,9 @@ export function PartnerSplit({ summary }: PartnerSplitProps) {
                 -{formatCurrency(summary.costPerPartner)}
               </span>
             </div>
-            <div className="flex justify-between items-center p-3 rounded-lg bg-success/10 border border-success/20">
+            <div className={`flex justify-between items-center p-3 rounded-lg ${summary.profitPerPartner >= 0 ? 'bg-success/10 border-success/20' : 'bg-destructive/10 border-destructive/20'} border`}>
               <span className="text-xs text-muted-foreground">Lucro</span>
-              <span className="text-success font-light text-lg">
+              <span className={`font-light text-lg ${summary.profitPerPartner >= 0 ? 'text-success' : 'text-destructive'}`}>
                 {formatCurrency(summary.profitPerPartner)}
               </span>
             </div>
@@ -54,7 +54,7 @@ export function PartnerSplit({ summary }: PartnerSplitProps) {
             </div>
             <span className="text-sm text-muted-foreground">Sócio 2</span>
           </div>
-          
+
           <div className="space-y-2">
             <div className="flex justify-between items-center p-3 rounded-lg bg-background/30">
               <span className="text-xs text-muted-foreground">Custos</span>
@@ -62,9 +62,9 @@ export function PartnerSplit({ summary }: PartnerSplitProps) {
                 -{formatCurrency(summary.costPerPartner)}
               </span>
             </div>
-            <div className="flex justify-between items-center p-3 rounded-lg bg-success/10 border border-success/20">
+            <div className={`flex justify-between items-center p-3 rounded-lg ${summary.profitPerPartner >= 0 ? 'bg-success/10 border-success/20' : 'bg-destructive/10 border-destructive/20'} border`}>
               <span className="text-xs text-muted-foreground">Lucro</span>
-              <span className="text-success font-light text-lg">
+              <span className={`font-light text-lg ${summary.profitPerPartner >= 0 ? 'text-success' : 'text-destructive'}`}>
                 {formatCurrency(summary.profitPerPartner)}
               </span>
             </div>

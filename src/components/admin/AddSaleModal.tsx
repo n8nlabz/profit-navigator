@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,11 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useCustomers } from '@/hooks/useCustomers';
 
 interface AddSaleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddSale: (source: string, value: number, credits: number, customerName: string) => void;
+  onAddSale: (source: string, value: number, credits: number, customerName: string, customerId?: string) => void;
 }
 
 const SALE_SOURCES = [
@@ -30,12 +31,20 @@ export function AddSaleModal({ isOpen, onClose, onAddSale }: AddSaleModalProps) 
   const [source, setSource] = useState('');
   const [value, setValue] = useState('');
   const [credits, setCredits] = useState('');
-  const [customerName, setCustomerName] = useState('');
+  const [customerId, setCustomerId] = useState('');
+  const { customers, loading } = useCustomers();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (source && value && credits && customerName.trim()) {
-      onAddSale(source, parseFloat(value), parseInt(credits), customerName.trim());
+    if (source && value && credits && customerId) {
+      const customer = customers.find(c => c.id === customerId);
+      onAddSale(
+        source,
+        parseFloat(value),
+        parseInt(credits),
+        customer ? customer.name : 'Cliente Desconhecido',
+        customerId
+      );
       handleClose();
     }
   };
@@ -44,7 +53,7 @@ export function AddSaleModal({ isOpen, onClose, onAddSale }: AddSaleModalProps) 
     setSource('');
     setValue('');
     setCredits('');
-    setCustomerName('');
+    setCustomerId('');
     onClose();
   };
 
@@ -52,7 +61,7 @@ export function AddSaleModal({ isOpen, onClose, onAddSale }: AddSaleModalProps) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div 
+      <div
         className="absolute inset-0 bg-background/80 backdrop-blur-sm"
         onClick={handleClose}
       />
@@ -72,17 +81,24 @@ export function AddSaleModal({ isOpen, onClose, onAddSale }: AddSaleModalProps) 
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="customerName" className="text-sm text-muted-foreground">
-              Nome do Cliente
+            <Label htmlFor="customer" className="text-sm text-muted-foreground">
+              Cliente
             </Label>
-            <Input
-              id="customerName"
-              placeholder="Digite o nome do cliente"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              className="bg-background/50 border-border/50 text-foreground placeholder:text-muted-foreground"
-              required
-            />
+            <Select value={customerId} onValueChange={setCustomerId} required>
+              <SelectTrigger className="bg-background/50 border-border/50 text-foreground">
+                <SelectValue placeholder={loading ? "Carregando..." : "Selecione o cliente"} />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border">
+                {customers.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="text-xs text-muted-foreground text-right">
+              <a href="/crm" className="hover:text-primary transition-colors">Gerenciar clientes →</a>
+            </div>
           </div>
 
           <div className="space-y-2">
